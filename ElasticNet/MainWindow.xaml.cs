@@ -15,7 +15,7 @@ namespace ElasticNet
             var settings = new ConnectionSettings(node);
             var client = new ElasticClient(settings);
 
-            var response = client.CatIndices();
+            var response = client.CatIndices()?.Records;
         }
     }
 }
