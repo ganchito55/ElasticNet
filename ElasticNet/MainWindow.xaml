@@ -6,8 +6,84 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
         xmlns:local="clr-namespace:ElasticNet"
         mc:Ignorable="d"
-        Title="ElasticNet" Height="350" Width="525" TitleCaps="False" >
-    <Grid>
-        
+        Title="ElasticNet" Height="600" Width="800" TitleCaps="False" Controls:ButtonHelper.PreserveTextCase="True" >
+    <Controls:MetroWindow.DataContext>
+       <local:ViewModel></local:ViewModel>        
+    </Controls:MetroWindow.DataContext>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+       <StackPanel Orientation="Horizontal" >
+           <StackPanel.Resources>
+               <Style TargetType="TextBlock">
+                   <Setter Property="VerticalAlignment" Value="Center"></Setter>
+               </Style>
+           </StackPanel.Resources>
+           
+           <TextBlock>IP:port</TextBlock>  
+           <Rectangle Fill="{x:Null}" Width="10"></Rectangle>  
+            <TextBox Width="200" Text="{Binding Host}"></TextBox> 
+            <Rectangle Fill="{x:Null}" Width="10"></Rectangle>
+           <TextBlock>User</TextBlock>
+           <Rectangle Fill="{x:Null}" Width="10"></Rectangle>
+            <TextBox Width="70" Text="{Binding User}"></TextBox>       
+            <Rectangle Fill="{x:Null}" Width="10"></Rectangle>
+            <TextBlock>Password</TextBlock>    
+            <Rectangle Fill="{x:Null}" Width="10"></Rectangle>
+            <TextBox Width="70" Text="{Binding Pass}"></TextBox>
+            <Rectangle Fill="{x:Null}" Width="10"></Rectangle>
+            <Button Content="{Binding ConnectText}" Command="{Binding ConnectCommand}"></Button>
+        </StackPanel>
+      <Grid Grid.Row="1" Margin="0,5,0,0">
+          <Grid.ColumnDefinitions>
+              <ColumnDefinition></ColumnDefinition>
+              <ColumnDefinition Width="Auto"></ColumnDefinition>
+              <ColumnDefinition></ColumnDefinition>
+          </Grid.ColumnDefinitions>
+           <Grid >
+               <Grid.RowDefinitions>
+                   <RowDefinition Height="Auto"></RowDefinition>
+                   <RowDefinition Height="Auto"></RowDefinition>
+                   <RowDefinition></RowDefinition>
+               </Grid.RowDefinitions>
+                <TextBlock Foreground="{StaticResource AccentColorBrush}" HorizontalAlignment="Center" FontSize="20">Twitter Search</TextBlock>
+               <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <TextBox HorizontalAlignment="Left" Text="{Binding SearchText}" Width="100">  </TextBox>
+                    <Button Command="{Binding SearchTweetsCommand}" Content="&#xE094;" FontFamily="Segoe MDL2 Assets"></Button>
+                </StackPanel>
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                    <ListView ItemsSource="{Binding TweetsRecovered}"></ListView>
+                </ScrollViewer>
+           </Grid>
+          <Rectangle Grid.Column="1" Fill="{StaticResource AccentColorBrush}" Width="2"></Rectangle>
+          <Grid Grid.Column="2">
+              <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition> 
+                    <RowDefinition Height="Auto"></RowDefinition>
+                  <RowDefinition></RowDefinition>
+              </Grid.RowDefinitions>
+                <TextBlock Foreground="{StaticResource AccentColorBrush}" HorizontalAlignment="Center" FontSize="20">ElasticSearch</TextBlock>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                  <TextBox Text="{Binding IndexName}" Width="70"></TextBox>
+                  <Rectangle Fill="{x:Null}" Width="10"></Rectangle>
+                  <Button Command="{Binding CreateIndecesCommand}">Create Indeces</Button>
+                    <Rectangle Fill="{x:Null}" Width="10"></Rectangle>
+                  <Button Command="{Binding ImportTweetsCommand}">Import Tweets</Button>
+                  <Rectangle Fill="{x:Null}" Width="10"></Rectangle>
+                  <TextBox Text="{Binding SearchInElasticText}" Width="90"></TextBox>
+                  <Button Command="{Binding SearchInElasticCommand}" Content="&#xE094;" FontFamily="Segoe MDL2 Assets"></Button>
+
+                </StackPanel>
+              <ScrollViewer Grid.Row="2">
+                  <DataGrid ItemsSource="{Binding IndexGUIs}"></DataGrid>
+              </ScrollViewer>
+              
+          </Grid>
+          
+              
+          
+        </Grid>  
     </Grid>
 </Controls:MetroWindow>

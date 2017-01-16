@@ -1,5 +1,8 @@
 ﻿using Nest;
 using System;
+using Tweetinvi;
+using Tweetinvi.Models;
+using Tweetinvi.Parameters;
 
 namespace ElasticNet
 {
@@ -11,11 +14,7 @@ namespace ElasticNet
         public MainWindow()
         {
             InitializeComponent();
-            var node = new Uri("http://elastic:mineoMineo@188.166.147.155:4444");
-            var settings = new ConnectionSettings(node);
-            var client = new ElasticClient(settings);
-
-            var response = client.CatIndices();
+            // var response = client.CatIndices()?.Records;
         }
     }
 }
