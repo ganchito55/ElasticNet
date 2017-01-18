@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -12,7 +11,7 @@ namespace ElasticNet
     public class ViewModel : BindableBase
     {  
         private readonly ElasticNetWrapper _elasticNet = new ElasticNetWrapper();
-
+        
         public ViewModel()
         {
             ConnectCommand = new DelegateCommand(Connect);
@@ -24,46 +23,20 @@ namespace ElasticNet
             ShowResultsWindowCommand = new DelegateCommand<string>(ShowResultsWindow);
         }
 
-        /// <summary>
-        /// Look for tweets with Twitter API
-        /// </summary>
-        private async void SearchTweets()
-        {
-            var searchParameter = new SearchTweetsParameters(SearchText)
-            {
-                Lang = LanguageFilter.English,
-                SearchType = SearchResultType.Mixed,
-                MaximumNumberOfResults = 20
-            };
-            Auth.SetUserCredentials("Jh0bbj6EMR6AlFPh6VC7C7zSM",
-                "wtlp17TnbIboqmbXn7Mn1REAxQdncNV0uynAqiYGQu3FnLH3dl",
-                "229170763-jnZpiJ3XIkpy9JzwbMtyt2wOqEG0ZRKAXcGjTWga",
-                "DWlRojhGL2OnxRbZMJqZLl1dVCZDDLGrutmiEtz4bbYdV");
-            var tweets = await SearchAsync.SearchTweets(searchParameter);
-            TweetsRecovered = new ObservableCollection<string>(tweets.Select(tweet => tweet.FullText).ToList());
-        }
+        #region Indices
 
-        /// <summary>
-        /// Connect to ElasticSearch
-        /// </summary>
-        private void Connect()
-        {        
-            var connected = _elasticNet.Connect(User, Pass, Host);
-            ConnectText = connected ? "Disconnect" : " Connect";
-        }
-
-        #region Indices 
         private ObservableCollection<IndexGUI> _indexGuis; 
+        // ReSharper disable once InconsistentNaming
         public ObservableCollection<IndexGUI> IndexGUIs
         {
-            get { return this._indexGuis; }
+            get { return _indexGuis; }
             set { SetProperty(ref _indexGuis, value); }
         }  
 
-        private String _searchInElasticText="your search"; 
-        public String SearchInElasticText
+        private string _searchInElasticText="your search"; 
+        public string SearchInElasticText
         {
-            get { return this._searchInElasticText; }
+            get { return _searchInElasticText; }
             set { SetProperty(ref _searchInElasticText, value); }
         }
 
@@ -95,8 +68,9 @@ namespace ElasticNet
             RefreshIndices();
         }
 
-
-
+        /// <summary>
+        /// Create all Indices show documentation
+        /// </summary>
         private void CreateIndices()
         {
             _elasticNet.CreateStandardIndex(IndexName);
@@ -107,6 +81,10 @@ namespace ElasticNet
             RefreshIndices();
         }
 
+        /// <summary>
+        /// Create the new window with the results retrievaled
+        /// </summary>
+        /// <param name="obj"></param>
         private void ShowResultsWindow(string obj)
         {
             var index = IndexGUIs.First(t => t.Name.Equals(obj));
@@ -117,12 +95,19 @@ namespace ElasticNet
             };
             window.Show();
         }
-    
 
+        private string _indexName = "your index";
 
+        public string IndexName
+        {
+            get { return _indexName; }
+            set { SetProperty(ref _indexName, value); }
+        }
 
-
-
+        public DelegateCommand CreateIndecesCommand { get; set; }
+        public DelegateCommand ImportTweetsCommand { get; set; }
+        public DelegateCommand<string> ShowResultsWindowCommand { get; set; }
+#endregion
 
         /// <summary>
         /// Creates an index with minimal_english stemmer
@@ -164,44 +149,51 @@ namespace ElasticNet
 
 
 
-        #endregion
 
-        #region Properties
 
         #region elasticConfig
 
-        private String _host = "188.166.147.155:4444";
-
-        public String Host
+        /// <summary>
+        /// Connect to ElasticSearch
+        /// </summary>
+        private void Connect()
         {
-            get { return this._host; }
+            var connected = _elasticNet.Connect(User, Pass, Host);
+            ConnectText = connected ? "Disconnect" : " Connect";
+        }
+
+        private string _host = "188.166.147.155:4444";
+
+        public string Host
+        {
+            get { return _host; }
             set { SetProperty(ref _host, value); }
         }
 
 
-        private String _user = "elastic";
+        private string _user = "elastic";
 
-        public String User
+        public string User
         {
-            get { return this._user; }
+            get { return _user; }
             set { SetProperty(ref _user, value); }
         }
 
 
-        private String _pass = "mineoMineo";
+        private string _pass = "mineoMineo";
 
-        public String Pass
+        public string Pass
         {
-            get { return this._pass; }
+            get { return _pass; }
             set { SetProperty(ref _pass, value); }
         }
 
 
-        private String _connectText = "Connect";
+        private string _connectText = "Connect";
 
-        public String ConnectText
+        public string ConnectText
         {
-            get { return this._connectText; }
+            get { return _connectText; }
             set { SetProperty(ref _connectText, value); }
         }
 
@@ -212,6 +204,25 @@ namespace ElasticNet
 
         #region Tweets
 
+        /// <summary>
+        /// Look for tweets with Twitter API
+        /// </summary>
+        private async void SearchTweets()
+        {
+            var searchParameter = new SearchTweetsParameters(SearchText)
+            {
+                Lang = LanguageFilter.English,
+                SearchType = SearchResultType.Mixed,
+                MaximumNumberOfResults = 20
+            };
+            Auth.SetUserCredentials("Jh0bbj6EMR6AlFPh6VC7C7zSM",
+                "wtlp17TnbIboqmbXn7Mn1REAxQdncNV0uynAqiYGQu3FnLH3dl",
+                "229170763-jnZpiJ3XIkpy9JzwbMtyt2wOqEG0ZRKAXcGjTWga",
+                "DWlRojhGL2OnxRbZMJqZLl1dVCZDDLGrutmiEtz4bbYdV");
+            var tweets = await SearchAsync.SearchTweets(searchParameter);
+            TweetsRecovered = new ObservableCollection<string>(tweets.Select(tweet => tweet.FullText).ToList());
+        }
+
         public DelegateCommand SearchTweetsCommand { get; set; }
 
 
@@ -219,35 +230,24 @@ namespace ElasticNet
 
         public string SearchText
         {
-            get { return this._searchText; }
+            get { return _searchText; }
             set { SetProperty(ref _searchText, value); }
         }
 
 
-        private ObservableCollection<String> _tweetsRecovered;
+        private ObservableCollection<string> _tweetsRecovered;
 
-        public ObservableCollection<String> TweetsRecovered
+        public ObservableCollection<string> TweetsRecovered
         {
-            get { return this._tweetsRecovered; }
+            get { return _tweetsRecovered; }
             set { SetProperty(ref _tweetsRecovered, value); }
         }
 
         #endregion
 
 
-        private String _indexName="your index";
+        
 
-        public String IndexName
-        {
-            get { return this._indexName; }
-            set { SetProperty(ref _indexName, value); }
-        }
-
-        public DelegateCommand CreateIndecesCommand { get; set; }
-        public DelegateCommand ImportTweetsCommand { get; set; }
-        public DelegateCommand<string> ShowResultsWindowCommand { get; set; }
-
-        #endregion
 
 
 
