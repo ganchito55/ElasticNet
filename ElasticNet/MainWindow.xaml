@@ -92,7 +92,7 @@
                           <DataGridTemplateColumn Header="Retrievaled" SortMemberPath="Results.Count" CanUserSort="True">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="{Binding Results.Count,StringFormat='{}{0} documents retrievaled'}"></Button>
+                                        <Button Command="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type DataGrid}}, Path=DataContext.ShowResultsWindowCommand}" CommandParameter="{Binding Name}" Content="{Binding Results.Count,StringFormat='{}{0} documents retrievaled'}"></Button>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

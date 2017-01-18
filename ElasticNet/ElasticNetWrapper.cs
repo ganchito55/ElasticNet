@@ -62,7 +62,8 @@ namespace ElasticNet
                 {
                     index.Results.Add(new ElasticResult
                     {
-                        Text = response.Documents.ElementAt(i).Msg, Score = response.Hits.ElementAt(i).Score
+                        // ReSharper disable once PossibleInvalidOperationException
+                        Text = response.Documents.ElementAt(i).Msg, Score = response.Hits.ElementAt(i).Score.HasValue? response.Hits.ElementAt(i).Score.Value : 0
                     });
                 }
             }

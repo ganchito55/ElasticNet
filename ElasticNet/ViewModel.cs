@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
-using Nest;
 using Prism.Commands;
 using Prism.Mvvm;
 using Tweetinvi;
@@ -14,7 +11,7 @@ namespace ElasticNet
 {
     public class ViewModel : BindableBase
     {  
-        private ElasticNetWrapper _elasticNet = new ElasticNetWrapper();
+        private readonly ElasticNetWrapper _elasticNet = new ElasticNetWrapper();
 
         public ViewModel()
         {
@@ -24,7 +21,12 @@ namespace ElasticNet
             ImportTweetsCommand = new DelegateCommand(ImportTweets);
             SearchInElasticCommand = new DelegateCommand(SearchInElastic);
             RefreshIndicesCommand = new DelegateCommand(RefreshIndices);
-        } 
+            ShowResultsWindowCommand = new DelegateCommand<string>(ShowResultsWindow);
+        }
+
+        /// <summary>
+        /// Look for tweets with Twitter API
+        /// </summary>
         private async void SearchTweets()
         {
             var searchParameter = new SearchTweetsParameters(SearchText)
@@ -41,6 +43,9 @@ namespace ElasticNet
             TweetsRecovered = new ObservableCollection<string>(tweets.Select(tweet => tweet.FullText).ToList());
         }
 
+        /// <summary>
+        /// Connect to ElasticSearch
+        /// </summary>
         private void Connect()
         {        
             var connected = _elasticNet.Connect(User, Pass, Host);
@@ -100,35 +105,45 @@ namespace ElasticNet
             //CreateEnglishStopWordsIndex(IndexName);
             //CreateMinimalStemmerIndex(IndexName);
             RefreshIndices();
-        } 
+        }
 
+        private void ShowResultsWindow(string obj)
+        {
+            var index = IndexGUIs.First(t => t.Name.Equals(obj));
+            var window = new ResultsIndexWindow
+            {
+                DataContext = index,
+                Title = index.Name
+            };
+            window.Show();
+        }
     
 
 
-        
 
-       
+
+
 
         /// <summary>
         /// Creates an index with minimal_english stemmer
         /// </summary>
         /// <param name="name"></param>
-    /*    private void CreateMinimalStemmerIndex(string name)
-        {
-            CustomAnalyzer analyzerDef = new CustomAnalyzer
+        /*    private void CreateMinimalStemmerIndex(string name)
             {
-                Tokenizer = "standard",
-                Filter = new List<string>() {"minimal_english"}
-            };   
-            var state = CreateIndexState(analyzerDef);
-            _client.CreateIndex(new CreateIndexRequest(name + "-stem-min",state));
-        }
-      */
-        
+                CustomAnalyzer analyzerDef = new CustomAnalyzer
+                {
+                    Tokenizer = "standard",
+                    Filter = new List<string>() {"minimal_english"}
+                };   
+                var state = CreateIndexState(analyzerDef);
+                _client.CreateIndex(new CreateIndexRequest(name + "-stem-min",state));
+            }
+          */
 
-        
 
- 
+
+
+
 
         /*private void CreateEnglishStopWordsIndex(string name)
         {
@@ -147,9 +162,9 @@ namespace ElasticNet
 
 
 
-    
 
-    #endregion
+
+        #endregion
 
         #region Properties
 
@@ -230,6 +245,7 @@ namespace ElasticNet
 
         public DelegateCommand CreateIndecesCommand { get; set; }
         public DelegateCommand ImportTweetsCommand { get; set; }
+        public DelegateCommand<string> ShowResultsWindowCommand { get; set; }
 
         #endregion
 
