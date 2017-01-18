@@ -76,8 +76,11 @@ namespace ElasticNet
             _elasticNet.CreateStandardIndex(IndexName);
             _elasticNet.CreateEnglishStemmerIndex(IndexName);
             _elasticNet.CreateLightStemmerIndex(IndexName);
-            //CreateEnglishStopWordsIndex(IndexName);
-            //CreateMinimalStemmerIndex(IndexName);
+            _elasticNet.CreateKStemIndex(IndexName);
+            _elasticNet.CreatePorterStemmerIndex(IndexName);
+            _elasticNet.CreateSnowballIndex(IndexName);
+            _elasticNet.CreateStopWordIndex(IndexName);
+            _elasticNet.CreateStopWordSnowballIndex(IndexName);
             RefreshIndices();
         }
 
@@ -109,47 +112,7 @@ namespace ElasticNet
         public DelegateCommand<string> ShowResultsWindowCommand { get; set; }
 #endregion
 
-        /// <summary>
-        /// Creates an index with minimal_english stemmer
-        /// </summary>
-        /// <param name="name"></param>
-        /*    private void CreateMinimalStemmerIndex(string name)
-            {
-                CustomAnalyzer analyzerDef = new CustomAnalyzer
-                {
-                    Tokenizer = "standard",
-                    Filter = new List<string>() {"minimal_english"}
-                };   
-                var state = CreateIndexState(analyzerDef);
-                _client.CreateIndex(new CreateIndexRequest(name + "-stem-min",state));
-            }
-          */
-
-
-
-
-
-
-        /*private void CreateEnglishStopWordsIndex(string name)
-        {
-            CustomAnalyzer analyzerDef = new CustomAnalyzer
-            {
-                Tokenizer = "standard",
-                Filter = new List<string>() { "english_stop" }
-            };
-
-            var state = CreateIndexState(analyzerDef);
-            _client.CreateIndex(new CreateIndexRequest(name + "-stop-word", state));
-        }
-          */
-
-
-
-
-
-
-
-
+      
 
         #region elasticConfig
 
@@ -210,10 +173,9 @@ namespace ElasticNet
         private async void SearchTweets()
         {
             var searchParameter = new SearchTweetsParameters(SearchText)
-            {
-                Lang = LanguageFilter.English,
+            {   
                 SearchType = SearchResultType.Mixed,
-                MaximumNumberOfResults = 20
+                MaximumNumberOfResults = 20,
             };
             Auth.SetUserCredentials("Jh0bbj6EMR6AlFPh6VC7C7zSM",
                 "wtlp17TnbIboqmbXn7Mn1REAxQdncNV0uynAqiYGQu3FnLH3dl",
