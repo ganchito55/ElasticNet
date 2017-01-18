@@ -1,16 +1,17 @@
-﻿using System;
+﻿using System.Collections.ObjectModel;
 using Prism.Mvvm;
 
 namespace ElasticNet
 {
+    // ReSharper disable once InconsistentNaming
     public class IndexGUI : BindableBase
     {
 
-        private String _name;
+        private string _name;
 
-        public String Name 
+        public string Name
         {
-            get { return this._name; }
+            get { return _name; }
             set { SetProperty(ref _name, value); }
         }
 
@@ -19,17 +20,26 @@ namespace ElasticNet
 
         public int DocumentsNumber
         {
-            get { return this._documentsNumber; }
+            get { return _documentsNumber; }
             set { SetProperty(ref _documentsNumber, value); }
         }
 
 
-        private int _documentsRetrieval;
+        private ObservableCollection<ElasticResult> _results = new ObservableCollection<ElasticResult>();
 
-        public int DocumentsRetrieval
+        public ObservableCollection<ElasticResult> Results
         {
-            get { return this._documentsRetrieval; }
-            set { SetProperty(ref _documentsRetrieval, value); }
+            get { return _results; }
+            set { SetProperty(ref _results, value); }
         }
     }
+
+    public class ElasticResult
+    {
+        public string Text { get; set; }
+        public double? Score { get; set; }
+    }
+
+
+
 }

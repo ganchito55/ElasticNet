@@ -13,7 +13,14 @@ namespace ElasticNet
         private ObservableCollection<IndexGUI> _indices;
         private bool _isConnected;
 
-       public bool Connect(string user, string pass, string host)
+        /// <summary>
+        /// Connect to ElasticSearch
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="pass"></param>
+        /// <param name="host"></param>
+        /// <returns>Status</returns>
+        public bool Connect(string user, string pass, string host)
         {
             if (!_isConnected)
             {
@@ -49,8 +56,15 @@ namespace ElasticNet
                     Query = new MatchQuery {Field = "tweet", Query = search}
                 };
                 var response = await _client.SearchAsync<MyTweet>(request);
-                if (response != null)
-                    index.DocumentsRetrieval = response.Documents.Count;
+                index.Results.Clear();
+                if (response == null) continue;
+                for (int i = 0; i < response.Documents.Count; i++)
+                {
+                    index.Results.Add(new ElasticResult
+                    {
+                        Text = response.Documents.ElementAt(i).Msg, Score = response.Hits.ElementAt(i).Score
+                    });
+                }
             }
         }
 
