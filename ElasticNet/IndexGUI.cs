@@ -15,18 +15,18 @@ namespace ElasticNet
         }
 
 
-        private String _documentsNumber;
+        private int _documentsNumber;
 
-        public String DocumentsNumber
+        public int DocumentsNumber
         {
             get { return this._documentsNumber; }
             set { SetProperty(ref _documentsNumber, value); }
         }
 
 
-        private String _documentsRetrieval;
+        private int _documentsRetrieval;
 
-        public String DocumentsRetrieval
+        public int DocumentsRetrieval
         {
             get { return this._documentsRetrieval; }
             set { SetProperty(ref _documentsRetrieval, value); }

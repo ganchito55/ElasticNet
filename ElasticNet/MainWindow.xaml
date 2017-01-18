@@ -67,6 +67,7 @@
                 <TextBlock Foreground="{StaticResource AccentColorBrush}" HorizontalAlignment="Center" FontSize="20">ElasticSearch</TextBlock>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
                   <TextBox Text="{Binding IndexName}" Width="70"></TextBox>
+                    <Button  Content="&#xE149;" FontFamily="Segoe MDL2 Assets" Command="{Binding RefreshIndicesCommand}"></Button> 
                   <Rectangle Fill="{x:Null}" Width="10"></Rectangle>
                   <Button Command="{Binding CreateIndecesCommand}">Create Indeces</Button>
                     <Rectangle Fill="{x:Null}" Width="10"></Rectangle>

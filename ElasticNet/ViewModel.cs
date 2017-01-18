@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Navigation;
-using Elasticsearch.Net;
 using Nest;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -16,20 +13,19 @@ using Tweetinvi.Parameters;
 namespace ElasticNet
 {
     public class ViewModel : BindableBase
-    {
-        private ElasticClient _client;
+    {  
+        private ElasticNetWrapper _elasticNet;
+        //private ElasticClient _client;
 
         public ViewModel()
         {
             ConnectCommand = new DelegateCommand(Connect);
             SearchTweetsCommand = new DelegateCommand(SearchTweets);
-            CreateIndecesCommand = new DelegateCommand(CreateIndeces);
+            CreateIndecesCommand = new DelegateCommand(CreateIndices);
             ImportTweetsCommand = new DelegateCommand(ImportTweets);
             SearchInElasticCommand = new DelegateCommand(SearchInElastic);
-        }
-
-     
-
+            RefreshIndicesCommand = new DelegateCommand(RefreshIndices);
+        } 
         private async void SearchTweets()
         {
             var searchParameter = new SearchTweetsParameters(SearchText)
@@ -47,37 +43,21 @@ namespace ElasticNet
         }
 
         private void Connect()
-        {
-            
-            Uri uri;
-            if (String.IsNullOrEmpty(User) || String.IsNullOrEmpty(Pass))
-            {
-                uri = new Uri("http://" + _host);
-            }
-            else
-            {
-                uri = new Uri("http://" + _user + ":" + _pass + "@" + _host);
-            }
-
-
-            _client = new ElasticClient(uri);
-            ConnectText = _client.CatHealth().IsValid ? "Disconnect" : "Connect";  
+        { 
+            _elasticNet = new ElasticNetWrapper(_user,_pass,_host);
+            var connected = _elasticNet.IsConnected();
+            ConnectText = connected ? "Disconnect" : " Connect";
         }
 
-        #region Indices
-
-
-        private ObservableCollection<IndexGUI> _indexGuis;
-
+        #region Indices 
+        private ObservableCollection<IndexGUI> _indexGuis; 
         public ObservableCollection<IndexGUI> IndexGUIs
         {
             get { return this._indexGuis; }
             set { SetProperty(ref _indexGuis, value); }
-        }
+        }  
 
-
-        private String _searchInElasticText="your search";
-
+        private String _searchInElasticText="your search"; 
         public String SearchInElasticText
         {
             get { return this._searchInElasticText; }
@@ -85,106 +65,51 @@ namespace ElasticNet
         }
 
         public DelegateCommand SearchInElasticCommand { get; set; }
+        public DelegateCommand RefreshIndicesCommand { get; set; }
 
-        private void SearchInElastic()
+        /// <summary>
+        /// Get all indices which name contains the IndexName
+        /// </summary>
+        private async void RefreshIndices()
         {
-            var request = new SearchRequest
-            {
-               Query = new MatchQuery {Field = "msg", Query = "university" }
-            };
-
-            var response = _client.Search<MyTweet>(request);
+            IndexGUIs = await _elasticNet.GetElasticSearchIndices(IndexName);
         }
 
         /// <summary>
-        /// Retrievals all created indices
+        /// Search in all indices 
         /// </summary>
-        private async void GetElasticSearchIndices()
+        private void  SearchInElastic()
         {
-            var response = (await _client.CatIndicesAsync())?.Records.Where(t => t.Index.Contains(IndexName)).ToList(); 
-            IndexGUIs = new ObservableCollection<IndexGUI>();
-            if (response != null)
-                foreach (CatIndicesRecord indicesRecord in response)
-                {
-                    IndexGUIs.Add(new IndexGUI() { Name = indicesRecord.Index, DocumentsNumber = indicesRecord.DocsCount });
-                }
+             _elasticNet.TweetMatchSearch(IndexGUIs, SearchInElasticText); 
         }
 
-        private void CreateIndeces()
-        {
-            CreateAllIndices(IndexName);
-            GetElasticSearchIndices();
-        }
-
-        private void CreateAllIndices(string name)
-        {
-            //CreateStandardIndex(name);
-            CreateEnglishStemmerIndex(name);
-            //CreateEnglishStopWordsIndex(name);
-            CreateLightStemmerIndex(name);
-            CreateStandardIndex(name);
-            //CreateMinimalStemmerIndex(name);
-        }
-
+        /// <summary>
+        /// Impor all tweets to all created indices
+        /// </summary>
         private async void ImportTweets()
         {
-            var operations = new List<IBulkOperation>();
-           
-
-
-            foreach (var tweet in TweetsRecovered)
-            {
-                operations.Add(new BulkIndexOperation<MyTweet>(new MyTweet(tweet))); 
-            }
-
-            List<Task> imports= new List<Task>();
-
-            foreach (IndexGUI indexGui in IndexGUIs)
-            {
-                imports.Add(_client.BulkAsync(new BulkRequest(indexGui.Name)
-                {
-                    Operations = operations
-                }));  
-            }
-
-            await Task.WhenAll(imports);
-            GetElasticSearchIndices(); 
-            //MyTweet tweet = new MyTweet("hello world");
-            //var response = _client.Index(tweet, idx => idx.Index("aa11-std"));
+            await _elasticNet.ImportTweetsBulk(TweetsRecovered.ToList());
+            RefreshIndices();
         }
 
 
-        /// <summary>
-        /// Creates an standard index
-        /// </summary>
-        /// <param name="name"></param>
-        private void CreateStandardIndex(string name)
+
+        private void CreateIndices()
         {
-            _client.CreateIndex(name + "-std");
-        }
+            _elasticNet.CreateStandardIndex(IndexName);
+            _elasticNet.CreateEnglishStemmerIndex(IndexName);
+            _elasticNet.CreateLightStemmerIndex(IndexName);
+            //CreateEnglishStopWordsIndex(IndexName);
+            //CreateMinimalStemmerIndex(IndexName);
+            RefreshIndices();
+        } 
 
-        /// <summary>
-        /// Creates an index state
-        /// </summary>
-        /// <param name="analyzerDef"></param>
-        /// <returns></returns>
-        private IndexState CreateIndexState()
-        {
-            CustomAnalyzer analyzerDef = new CustomAnalyzer
-            {
-                Tokenizer = "standard",
-                Filter = new List<string>() { "myFilter" }
-            };
+    
 
-            IndexState state = new IndexState
-            {
-                Settings = new IndexSettings
-                {
-                    Analysis = new Analysis { Analyzers = new Analyzers { { "default", analyzerDef } } }
-                }
-            };
-            return state;
-        }
+
+        
+
+       
 
         /// <summary>
         /// Creates an index with minimal_english stemmer
@@ -201,56 +126,9 @@ namespace ElasticNet
             _client.CreateIndex(new CreateIndexRequest(name + "-stem-min",state));
         }
       */
-        /// <summary>
-        /// Creates an index with light english stemmer
-        /// </summary>
-        /// <param name="name"></param>
-        private void CreateLightStemmerIndex(string name)
-        {
+        
 
-            var state = CreateIndexState();
-            state.Settings.Analysis.TokenFilters = new TokenFilters
-            {
-                {"myFilter", new StemmerTokenFilter() {Language = "light_english"}}
-            };  
-            _client.CreateIndex(new CreateIndexRequest(name + "-stem-lig", state));
-        }   
-
-        /// <summary>
-        /// Creates an index with english stemmer
-        /// </summary>
-        /// <param name="name"></param>
-        private void CreateEnglishStemmerIndex(string name)
-        {
-            var state = CreateIndexState(); 
-            state.Settings.Analysis.TokenFilters = new TokenFilters
-            {
-                {"myFilter", new StemmerTokenFilter() {Language = "english"}}
-            }; 
-            
-             
-                _client.CreateIndex(name + "-stem-eng", c =>
-            {
-                c.Settings(l => l.Analysis(a =>
-                {
-                    a.TokenFilters(t => t.Stemmer("myFilter", j => j.Language("english")));
-                    a.Analyzers(an => an.Custom("juanPedrro", def =>
-                    {
-                        def.Tokenizer("standard");
-                        def.Filters(new string[] {"lowercase", "myFilter" }
-                        );
-                        return def;
-                    }));
-                    return a;
-                }));
-
-                c.Mappings(md => md.Map<MyTweet>(m => m.AutoMap()));
-
-
-                return c;
-            });
-           // _client.CreateIndex(new CreateIndexRequest(name + "-stem-eng", state));
-        }
+        
 
  
 

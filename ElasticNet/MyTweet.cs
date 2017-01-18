@@ -9,7 +9,7 @@ namespace ElasticNet
         {
             Msg = msg;
         }
-        [Text(Name = "tweet",Analyzer = "juanPedrro")]
+        [Text(Name = "tweet",Analyzer = "myAnalizer")]
         public String Msg { get; set; }
     }
 }

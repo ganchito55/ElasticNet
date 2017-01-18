@@ -135,7 +135,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ElasticNet.cs" />
+    <Compile Include="ElasticNetWrapper.cs" />
     <Compile Include="IndexGUI.cs" />
     <Compile Include="MyTweet.cs" />
     <Compile Include="ViewModel.cs" />
