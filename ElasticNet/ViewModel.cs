@@ -14,8 +14,7 @@ namespace ElasticNet
 {
     public class ViewModel : BindableBase
     {  
-        private ElasticNetWrapper _elasticNet;
-        //private ElasticClient _client;
+        private ElasticNetWrapper _elasticNet = new ElasticNetWrapper();
 
         public ViewModel()
         {
@@ -43,9 +42,8 @@ namespace ElasticNet
         }
 
         private void Connect()
-        { 
-            _elasticNet = new ElasticNetWrapper(_user,_pass,_host);
-            var connected = _elasticNet.IsConnected();
+        {        
+            var connected = _elasticNet.Connect(User, Pass, Host);
             ConnectText = connected ? "Disconnect" : " Connect";
         }
 

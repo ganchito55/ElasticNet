@@ -9,36 +9,29 @@ namespace ElasticNet
 {
     public class ElasticNetWrapper
     {
-        private readonly ElasticClient _client;
+        private ElasticClient _client;
         private ObservableCollection<IndexGUI> _indices;
         private bool _isConnected;
 
-
-        /// <summary>
-        ///     Connect to ElasticSearch host
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="pass"></param>
-        /// <param name="host"></param>
-        public ElasticNetWrapper(string user, string pass, string host)
+       public bool Connect(string user, string pass, string host)
         {
-            Uri uri;
-            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(pass))
-                uri = new Uri("http://" + host);
-            else
-                uri = new Uri("http://" + user + ":" + pass + "@" + host);
-            _client = new ElasticClient(uri);
-        }
+            if (!_isConnected)
+            {
+                Uri uri;
+                if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(pass))
+                    uri = new Uri("http://" + host);
+                else
+                    uri = new Uri("http://" + user + ":" + pass + "@" + host);
+                _client = new ElasticClient(uri);
+                _isConnected = _client.CatHealth().IsValid;
+                return _isConnected;
+            }
 
-        /// <summary>
-        ///     Get status
-        /// </summary>
-        /// <returns></returns>
-        public bool IsConnected()
-        {
-            _isConnected = _client.CatHealth().IsValid;
+            //Disconnect
+            _client = null;
+            _isConnected = false;
             return _isConnected;
-        }
+        }  
 
         /// <summary>
         ///     Do a match search in all indices
