@@ -134,7 +134,7 @@ namespace ElasticNet
                     a.Analyzers(an => an.Custom("myAnalizer", def =>
                     {
                         def.Tokenizer("standard");
-                        def.Filters("myFilter");
+                        def.Filters("lowercase", "myFilter");
                         return def;
                     }));
                     return a;
@@ -158,7 +158,7 @@ namespace ElasticNet
                     a.Analyzers(an => an.Custom("myAnalizer", def =>
                     {
                         def.Tokenizer("standard");
-                        def.Filters("myFilter");
+                        def.Filters("lowercase", "myFilter");
                         return def;
                     }));
                     return a;
@@ -167,6 +167,128 @@ namespace ElasticNet
                 return c;
             });
         }
+
+        /// <summary>
+        /// Creates an index with the porter stemmer
+        /// </summary>
+        /// <param name="name"></param>
+        public void CreatePorterStemmerIndex(string name)
+        {
+            _client.CreateIndex(name + "-stem-porter", c =>
+            {
+                c.Settings(l => l.Analysis(a =>
+                {
+                    a.TokenFilters(t => t.PorterStem("myFilter",j=>j));
+                    a.Analyzers(an => an.Custom("myAnalizer", def =>
+                    {
+                        def.Tokenizer("standard");
+                        def.Filters("lowercase","myFilter");
+                        return def;
+                    }));
+                    return a;
+                }));
+                c.Mappings(md => md.Map<MyTweet>(m => m.AutoMap()));
+                return c;
+            });
+        }
+
+        /// <summary>
+        /// Creates an index with stop word filter
+        /// </summary>
+        /// <param name="name"></param>
+        public void CreateStopWordIndex(string name)
+        {
+            _client.CreateIndex(name + "-stem-stop", c =>
+            {
+                c.Settings(l => l.Analysis(a =>
+                {
+                    // ReSharper disable once PossiblyMistakenUseOfParamsMethod
+                    a.TokenFilters(t => t.Stop("myFilter", j => j.StopWords("_english_"))); 
+                    a.Analyzers(an => an.Custom("myAnalizer", def =>
+                    {
+                        def.Tokenizer("standard");
+                        def.Filters("lowercase", "myFilter");
+                        return def;
+                    }));
+                    return a;
+                }));
+                c.Mappings(md => md.Map<MyTweet>(m => m.AutoMap()));
+                return c;
+            });
+        }
+
+        /// <summary>
+        /// Creates an index with the KStem system
+        /// </summary>
+        /// <param name="name"></param>
+        public void CreateKStemIndex(string name)
+        {
+            _client.CreateIndex(name + "-stem-kstem", c =>
+            {
+                c.Settings(l => l.Analysis(a =>
+                {
+                    a.TokenFilters(t => t.KStem("myFilter",j=>j));
+                    a.Analyzers(an => an.Custom("myAnalizer", def =>
+                    {
+                        def.Tokenizer("standard");
+                        def.Filters("lowercase", "myFilter");
+                        return def;
+                    }));
+                    return a;
+                }));
+                c.Mappings(md => md.Map<MyTweet>(m => m.AutoMap()));
+                return c;
+            });
+        }
+
+        /// <summary>
+        /// Creates an index using Snowball
+        /// </summary>
+        /// <param name="name"></param>
+        public void CreateSnowballIndex(string name)
+        {
+            _client.CreateIndex(name + "-stem-snow", c =>
+            {
+                c.Settings(l => l.Analysis(a =>
+                {
+                    a.TokenFilters(t => t.Snowball("myFilter", j => j.Language(SnowballLanguage.English)));
+                    a.Analyzers(an => an.Custom("myAnalizer", def =>
+                    {
+                        def.Tokenizer("standard");
+                        def.Filters("lowercase", "myFilter");
+                        return def;
+                    }));
+                    return a;
+                }));
+                c.Mappings(md => md.Map<MyTweet>(m => m.AutoMap()));
+                return c;
+            });
+        }
+
+        public void CreateStopWordSnowballIndex(string name)
+        {
+            _client.CreateIndex(name + "-stem-stop-snow", c =>
+            {
+                c.Settings(l => l.Analysis(a =>
+                {
+                    a.TokenFilters(t => t.Snowball("snowFilter", j => j.Language(SnowballLanguage.English)).Stop("stopFilter",d=>d.StopWords("_english_")));  
+                    a.Analyzers(an => an.Custom("myAnalizer", def =>
+                    {
+                        def.Tokenizer("standard");
+                        def.Filters("lowercase","stopFilter", "snowFilter");
+                        return def;
+                    }));
+                    return a;
+                }));
+                c.Mappings(md => md.Map<MyTweet>(m => m.AutoMap()));
+                return c;
+            });
+        }
+
+
+
+
+
 
         #endregion
     }
