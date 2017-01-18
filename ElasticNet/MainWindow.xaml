@@ -69,7 +69,8 @@
               <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition> 
                     <RowDefinition Height="Auto"></RowDefinition>
-                  <RowDefinition></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition> 
+                    <RowDefinition></RowDefinition>
               </Grid.RowDefinitions>
                 <TextBlock Foreground="{StaticResource AccentColorBrush}" HorizontalAlignment="Center" FontSize="20">ElasticSearch</TextBlock>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
@@ -79,12 +80,13 @@
                   <Button Command="{Binding CreateIndecesCommand}">Create Indeces</Button>
                     <Rectangle Fill="{x:Null}" Width="10"></Rectangle>
                   <Button Command="{Binding ImportTweetsCommand}">Import Tweets</Button>
-                  <Rectangle Fill="{x:Null}" Width="10"></Rectangle>
-                  <TextBox Text="{Binding SearchInElasticText}" Width="90"></TextBox>
-                  <Button Command="{Binding SearchInElasticCommand}" Content="&#xE094;" FontFamily="Segoe MDL2 Assets"></Button>
-
+                  <Rectangle Fill="{x:Null}" Width="10"></Rectangle> 
                 </StackPanel>
-              <ScrollViewer Grid.Row="2">
+              <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <TextBox Text="{Binding SearchInElasticText}" Width="250"></TextBox>
+                    <Button Command="{Binding SearchInElasticCommand}" Content="&#xE094;" FontFamily="Segoe MDL2 Assets"></Button>
+                </StackPanel>
+              <ScrollViewer Grid.Row="3">
                     <DataGrid IsReadOnly="True" ItemsSource="{Binding IndexGUIs}" AutoGenerateColumns="False" ColumnHeaderStyle="{StaticResource MyColumnHeader}">
                       <DataGrid.Columns>
                          <DataGridTextColumn Header="Name" Binding="{Binding Name}"></DataGridTextColumn> 
