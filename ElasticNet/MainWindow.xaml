@@ -10,6 +10,13 @@
     <Controls:MetroWindow.DataContext>
        <local:ViewModel></local:ViewModel>        
     </Controls:MetroWindow.DataContext>
+    <Controls:MetroWindow.Resources>
+        <Style x:Key="MyColumnHeader" 
+               BasedOn="{StaticResource MetroDataGridColumnHeader}" 
+               TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="Controls:ControlsHelper.ContentCharacterCasing" Value="Normal"/>
+        </Style>
+    </Controls:MetroWindow.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
@@ -78,7 +85,19 @@
 
                 </StackPanel>
               <ScrollViewer Grid.Row="2">
-                  <DataGrid ItemsSource="{Binding IndexGUIs}"></DataGrid>
+                    <DataGrid IsReadOnly="True" ItemsSource="{Binding IndexGUIs}" AutoGenerateColumns="False" ColumnHeaderStyle="{StaticResource MyColumnHeader}">
+                      <DataGrid.Columns>
+                         <DataGridTextColumn Header="Name" Binding="{Binding Name}"></DataGridTextColumn> 
+                         <DataGridTextColumn Header="Documents"  Binding="{Binding DocumentsNumber}"></DataGridTextColumn>
+                          <DataGridTemplateColumn Header="Retrievaled" SortMemberPath="Results.Count" CanUserSort="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding Results.Count,StringFormat='{}{0} documents retrievaled'}"></Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
               </ScrollViewer>
               
           </Grid>
