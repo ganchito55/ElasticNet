@@ -19,10 +19,7 @@ namespace ElasticNet
         public MyTweetDFR(string msg) : base(msg)
         {
         }
-
-      /*  [Text(Name = "tweet", Analyzer = "myAnalizer",Similarity = "DFR")]
-        public new String Msg { get; set; }
-        */
+     
         [Text(Name = "tweet", Analyzer = "myAnalizer", Similarity = "dfr")]
         public String Txt { get; set; }
     }
