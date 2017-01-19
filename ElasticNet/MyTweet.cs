@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using Nest;
 
 namespace ElasticNet
@@ -11,6 +12,17 @@ namespace ElasticNet
         }
         [Text(Name = "tweet",Analyzer = "myAnalizer")]
         public String Msg { get; set; }
+
+        /// <summary>
+        /// Remove "RT", users (@nick), urls
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static String FilterCharacters(string input)
+        {   
+            Regex regex = new Regex("(RT)|(@[^\\s]+)|(http[^\\s]+)");
+            return regex.Replace(input, String.Empty).Trim();
+        }
     }
 
     // ReSharper disable once InconsistentNaming
