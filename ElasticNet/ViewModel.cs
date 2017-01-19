@@ -81,6 +81,7 @@ namespace ElasticNet
             _elasticNet.CreateSnowballIndex(IndexName);
             _elasticNet.CreateStopWordIndex(IndexName);
             _elasticNet.CreateStopWordSnowballIndex(IndexName);
+            _elasticNet.CreateStopWordSnowballIndexDFR(IndexName);
             RefreshIndices();
         }
 

@@ -12,4 +12,18 @@ namespace ElasticNet
         [Text(Name = "tweet",Analyzer = "myAnalizer")]
         public String Msg { get; set; }
     }
+
+    // ReSharper disable once InconsistentNaming
+    public class MyTweetDFR : MyTweet
+    {
+        public MyTweetDFR(string msg) : base(msg)
+        {
+        }
+
+      /*  [Text(Name = "tweet", Analyzer = "myAnalizer",Similarity = "DFR")]
+        public new String Msg { get; set; }
+        */
+        [Text(Name = "tweet", Analyzer = "myAnalizer", Similarity = "dfr")]
+        public String Txt { get; set; }
+    }
 }

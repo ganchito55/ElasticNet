@@ -265,6 +265,10 @@ namespace ElasticNet
             });
         }
 
+        /// <summary>
+        /// Creates an index using Snowball more Stop Words filter
+        /// </summary>
+        /// <param name="name"></param>
         public void CreateStopWordSnowballIndex(string name)
         {
             _client.CreateIndex(name + "-stem-stop-snow", c =>
@@ -281,6 +285,30 @@ namespace ElasticNet
                     return a;
                 }));
                 c.Mappings(md => md.Map<MyTweet>(m => m.AutoMap()));
+                return c;
+            });
+        }
+
+        /// <summary>
+        /// Creates an index using Snowball more Stop Words filter more DFR similarity algorithm
+        /// </summary>
+        /// <param name="name"></param>
+        public void CreateStopWordSnowballIndexDFR(string name)
+        {
+            _client.CreateIndex(name + "-stem-stop-snow-dfr", c =>
+            {
+                c.Settings(l => l.Analysis(a =>
+                {
+                    a.TokenFilters(t => t.Snowball("snowFilter", j => j.Language(SnowballLanguage.English)).Stop("stopFilter", d => d.StopWords("_english_")));
+                    a.Analyzers(an => an.Custom("myAnalizer", def =>
+                    {
+                        def.Tokenizer("standard");
+                        def.Filters("lowercase", "stopFilter", "snowFilter");
+                        return def;
+                    }));
+                    return a;
+                }));
+                c.Mappings(md => md.Map<MyTweetDFR>(m => m.AutoMap()));
                 return c;
             });
         }
