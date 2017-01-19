@@ -120,6 +120,7 @@ namespace ElasticNet
         /// <param name="name"></param>
         public void CreateStandardIndex(string name)
         {
+            if(!_isConnected) return;
             _client.CreateIndex(name + "-std");
         }
 
@@ -129,6 +130,7 @@ namespace ElasticNet
         /// <param name="name"></param>
         public void CreateEnglishStemmerIndex(string name)
         {
+            if (!_isConnected) return; 
             _client.CreateIndex(name + "-stem-eng", c =>
             {
                 c.Settings(l => l.Analysis(a =>
@@ -153,6 +155,7 @@ namespace ElasticNet
         /// <param name="name"></param>
         public void CreateLightStemmerIndex(string name)
         {
+            if (!_isConnected) return;
             _client.CreateIndex(name + "-stem-lig", c =>
             {
                 c.Settings(l => l.Analysis(a =>
@@ -177,6 +180,8 @@ namespace ElasticNet
         /// <param name="name"></param>
         public void CreatePorterStemmerIndex(string name)
         {
+            if (!_isConnected) return;
+
             _client.CreateIndex(name + "-stem-porter", c =>
             {
                 c.Settings(l => l.Analysis(a =>
@@ -201,6 +206,8 @@ namespace ElasticNet
         /// <param name="name"></param>
         public void CreateStopWordIndex(string name)
         {
+            if (!_isConnected) return;
+
             _client.CreateIndex(name + "-stem-stop", c =>
             {
                 c.Settings(l => l.Analysis(a =>
@@ -226,6 +233,8 @@ namespace ElasticNet
         /// <param name="name"></param>
         public void CreateKStemIndex(string name)
         {
+            if (!_isConnected) return;
+
             _client.CreateIndex(name + "-stem-kstem", c =>
             {
                 c.Settings(l => l.Analysis(a =>
@@ -250,6 +259,8 @@ namespace ElasticNet
         /// <param name="name"></param>
         public void CreateSnowballIndex(string name)
         {
+            if (!_isConnected) return;
+
             _client.CreateIndex(name + "-stem-snow", c =>
             {
                 c.Settings(l => l.Analysis(a =>
@@ -274,6 +285,8 @@ namespace ElasticNet
         /// <param name="name"></param>
         public void CreateStopWordSnowballIndex(string name)
         {
+            if (!_isConnected) return;
+
             _client.CreateIndex(name + "-stem-stop-snow", c =>
             {
                 c.Settings(l => l.Analysis(a =>
@@ -300,6 +313,8 @@ namespace ElasticNet
         // ReSharper disable once InconsistentNaming
         public void CreateStopWordSnowballIndexDFR(string name)
         {
+            if (!_isConnected) return;
+
             _client.CreateIndex(name + "-stem-stop-snow-dfr", c =>
             {
                 c.Settings(l => l.Analysis(a =>
@@ -322,6 +337,7 @@ namespace ElasticNet
 
         private async void AnalyzeText(string indexName, ElasticResult elasticResult)
         {
+            if (!_isConnected) return;
             var result = await _client.AnalyzeAsync(t => t.Index(indexName).Analyzer("myAnalizer").Text(elasticResult.Text));
             elasticResult.TextAnalyzed = string.Join(" ",result.Tokens.Select(t=>t.Token));
         }
