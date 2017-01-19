@@ -60,11 +60,14 @@ namespace ElasticNet
                 if (response == null) continue;
                 for (int i = 0; i < response.Documents.Count; i++)
                 {
-                    index.Results.Add(new ElasticResult
+                    var result = new ElasticResult
                     {
                         // ReSharper disable once PossibleInvalidOperationException
-                        Text = response.Documents.ElementAt(i).Msg, Score = response.Hits.ElementAt(i).Score.HasValue? response.Hits.ElementAt(i).Score.Value : 0
-                    });
+                        Text = response.Documents.ElementAt(i).Msg,
+                        Score = response.Hits.ElementAt(i).Score.HasValue ? response.Hits.ElementAt(i).Score.Value : 0
+                    };
+                    index.Results.Add(result);
+                    AnalyzeText(index.Name,result);
                 }
             }
         }
@@ -275,6 +278,7 @@ namespace ElasticNet
             {
                 c.Settings(l => l.Analysis(a =>
                 {
+                    // ReSharper disable once PossiblyMistakenUseOfParamsMethod
                     a.TokenFilters(t => t.Snowball("snowFilter", j => j.Language(SnowballLanguage.English)).Stop("stopFilter",d=>d.StopWords("_english_")));  
                     a.Analyzers(an => an.Custom("myAnalizer", def =>
                     {
@@ -293,12 +297,14 @@ namespace ElasticNet
         /// Creates an index using Snowball more Stop Words filter more DFR similarity algorithm
         /// </summary>
         /// <param name="name"></param>
+        // ReSharper disable once InconsistentNaming
         public void CreateStopWordSnowballIndexDFR(string name)
         {
             _client.CreateIndex(name + "-stem-stop-snow-dfr", c =>
             {
                 c.Settings(l => l.Analysis(a =>
                 {
+                    // ReSharper disable once PossiblyMistakenUseOfParamsMethod
                     a.TokenFilters(t => t.Snowball("snowFilter", j => j.Language(SnowballLanguage.English)).Stop("stopFilter", d => d.StopWords("_english_")));
                     a.Analyzers(an => an.Custom("myAnalizer", def =>
                     {
@@ -312,12 +318,12 @@ namespace ElasticNet
                 return c;
             });
         }
-
-
-
-
-
-
         #endregion
+
+        private async void AnalyzeText(string indexName, ElasticResult elasticResult)
+        {
+            var result = await _client.AnalyzeAsync(t => t.Index(indexName).Analyzer("myAnalizer").Text(elasticResult.Text));
+            elasticResult.TextAnalyzed = string.Join(" ",result.Tokens.Select(t=>t.Token));
+        }
     }
 }

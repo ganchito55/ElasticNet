@@ -5,8 +5,7 @@ namespace ElasticNet
 {
     // ReSharper disable once InconsistentNaming
     public class IndexGUI : BindableBase
-    {
-
+    {  
         private string _name;
 
         public string Name
@@ -38,8 +37,6 @@ namespace ElasticNet
     {
         public string Text { get; set; }
         public double Score { get; set; }
+        public string TextAnalyzed { get; set; }
     }
-
-
-
 }
