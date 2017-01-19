@@ -182,8 +182,9 @@ namespace ElasticNet
                 "wtlp17TnbIboqmbXn7Mn1REAxQdncNV0uynAqiYGQu3FnLH3dl",
                 "229170763-jnZpiJ3XIkpy9JzwbMtyt2wOqEG0ZRKAXcGjTWga",
                 "DWlRojhGL2OnxRbZMJqZLl1dVCZDDLGrutmiEtz4bbYdV");
+            
             var tweets = await SearchAsync.SearchTweets(searchParameter);
-            TweetsRecovered = new ObservableCollection<string>(tweets.Select(tweet => tweet.FullText).ToList());
+            TweetsRecovered = new ObservableCollection<string>(tweets.Select(tweet => MyTweet.FilterCharacters(tweet.FullText)).ToList());
         }
 
         public DelegateCommand SearchTweetsCommand { get; set; }
