@@ -335,6 +335,11 @@ namespace ElasticNet
         }
         #endregion
 
+        /// <summary>
+        /// Retrieves the analized text
+        /// </summary>
+        /// <param name="indexName"></param>
+        /// <param name="elasticResult"></param>
         private async void AnalyzeText(string indexName, ElasticResult elasticResult)
         {
             if (!_isConnected) return;
