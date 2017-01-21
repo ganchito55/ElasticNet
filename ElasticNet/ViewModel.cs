@@ -74,8 +74,6 @@ namespace ElasticNet
         private void CreateIndices()
         {
             _elasticNet.CreateStandardIndex(IndexName);
-            _elasticNet.CreateEnglishStemmerIndex(IndexName);
-            _elasticNet.CreateLightStemmerIndex(IndexName);
             _elasticNet.CreateKStemIndex(IndexName);
             _elasticNet.CreatePorterStemmerIndex(IndexName);
             _elasticNet.CreateSnowballIndex(IndexName);

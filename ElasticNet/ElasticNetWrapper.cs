@@ -123,58 +123,8 @@ namespace ElasticNet
         {
             if(!_isConnected) return;
             _client.CreateIndex(name + "-std");
-        }
-
-        /// <summary>
-        ///     Creates an index with english stemmer
-        /// </summary>
-        /// <param name="name"></param>
-        public void CreateEnglishStemmerIndex(string name)
-        {
-            if (!_isConnected) return; 
-            _client.CreateIndex(name + "-stem-eng", c =>
-            {
-                c.Settings(l => l.Analysis(a =>
-                {
-                    a.TokenFilters(t => t.Stemmer("myFilter", j => j.Language("english")));
-                    a.Analyzers(an => an.Custom("myAnalizer", def =>
-                    {
-                        def.Tokenizer("standard");
-                        def.Filters("lowercase", "myFilter");
-                        return def;
-                    }));
-                    return a;
-                }));
-                c.Mappings(md => md.Map<MyTweet>(m => m.AutoMap()));
-                return c;
-            });
-        }
-
-        /// <summary>
-        ///     Creates an index with light english stemmer
-        /// </summary>
-        /// <param name="name"></param>
-        public void CreateLightStemmerIndex(string name)
-        {
-            if (!_isConnected) return;
-            _client.CreateIndex(name + "-stem-lig", c =>
-            {
-                c.Settings(l => l.Analysis(a =>
-                {
-                    a.TokenFilters(t => t.Stemmer("myFilter", j => j.Language("light_english")));
-                    a.Analyzers(an => an.Custom("myAnalizer", def =>
-                    {
-                        def.Tokenizer("standard");
-                        def.Filters("lowercase", "myFilter");
-                        return def;
-                    }));
-                    return a;
-                }));
-                c.Mappings(md => md.Map<MyTweet>(m => m.AutoMap()));
-                return c;
-            });
-        }
-
+        } 
+       
         /// <summary>
         /// Creates an index with the porter stemmer
         /// </summary>
