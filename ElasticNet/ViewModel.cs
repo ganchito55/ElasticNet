@@ -176,7 +176,7 @@ namespace ElasticNet
             var searchParameter = new SearchTweetsParameters(SearchText)
             {   
                 SearchType = SearchResultType.Mixed,
-                MaximumNumberOfResults = 20,
+                MaximumNumberOfResults = 50,
             };
             Auth.SetUserCredentials("Jh0bbj6EMR6AlFPh6VC7C7zSM",
                 "wtlp17TnbIboqmbXn7Mn1REAxQdncNV0uynAqiYGQu3FnLH3dl",
