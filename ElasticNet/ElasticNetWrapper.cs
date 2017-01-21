@@ -53,6 +53,7 @@ namespace ElasticNet
             {
                 var request = new SearchRequest(index.Name)
                 {
+                    Size = 100,
                     Query = new MatchQuery {Field = "tweet", Query = search}
                 };
                 var response = await _client.SearchAsync<MyTweet>(request);
