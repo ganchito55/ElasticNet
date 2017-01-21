@@ -5,8 +5,12 @@ namespace ElasticNet
 {
     // ReSharper disable once InconsistentNaming
     public class IndexGUI : BindableBase
-    {  
+    {
+        private int _documentsNumber;
         private string _name;
+
+
+        private ObservableCollection<ElasticResult> _results = new ObservableCollection<ElasticResult>();
 
         public string Name
         {
@@ -14,17 +18,11 @@ namespace ElasticNet
             set { SetProperty(ref _name, value); }
         }
 
-
-        private int _documentsNumber;
-
         public int DocumentsNumber
         {
             get { return _documentsNumber; }
             set { SetProperty(ref _documentsNumber, value); }
         }
-
-
-        private ObservableCollection<ElasticResult> _results = new ObservableCollection<ElasticResult>();
 
         public ObservableCollection<ElasticResult> Results
         {

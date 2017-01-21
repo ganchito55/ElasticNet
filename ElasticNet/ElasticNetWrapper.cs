@@ -14,7 +14,7 @@ namespace ElasticNet
         private bool _isConnected;
 
         /// <summary>
-        /// Connect to ElasticSearch
+        ///     Connect to ElasticSearch
         /// </summary>
         /// <param name="user"></param>
         /// <param name="pass"></param>
@@ -38,7 +38,7 @@ namespace ElasticNet
             _client = null;
             _isConnected = false;
             return _isConnected;
-        }  
+        }
 
         /// <summary>
         ///     Do a match search in all indices
@@ -59,7 +59,7 @@ namespace ElasticNet
                 var response = await _client.SearchAsync<MyTweet>(request);
                 index.Results.Clear();
                 if (response == null) continue;
-                for (int i = 0; i < response.Documents.Count; i++)
+                for (var i = 0; i < response.Documents.Count; i++)
                 {
                     var result = new ElasticResult
                     {
@@ -68,7 +68,7 @@ namespace ElasticNet
                         Score = response.Hits.ElementAt(i).Score.HasValue ? response.Hits.ElementAt(i).Score.Value : 0
                     };
                     index.Results.Add(result);
-                    AnalyzeText(index.Name,result);
+                    AnalyzeText(index.Name, result);
                 }
             }
         }
@@ -113,6 +113,19 @@ namespace ElasticNet
             await Task.WhenAll(imports);
         }
 
+        /// <summary>
+        ///     Retrieves the analized text
+        /// </summary>
+        /// <param name="indexName"></param>
+        /// <param name="elasticResult"></param>
+        private async void AnalyzeText(string indexName, ElasticResult elasticResult)
+        {
+            if (!_isConnected) return;
+            var result =
+                await _client.AnalyzeAsync(t => t.Index(indexName).Analyzer("myAnalizer").Text(elasticResult.Text));
+            elasticResult.TextAnalyzed = string.Join(" ", result.Tokens.Select(t => t.Token));
+        }
+
         #region CreateIndex
 
         /// <summary>
@@ -121,12 +134,12 @@ namespace ElasticNet
         /// <param name="name"></param>
         public void CreateStandardIndex(string name)
         {
-            if(!_isConnected) return;
+            if (!_isConnected) return;
             _client.CreateIndex(name + "-std");
-        } 
-       
+        }
+
         /// <summary>
-        /// Creates an index with the porter stemmer
+        ///     Creates an index with the porter stemmer
         /// </summary>
         /// <param name="name"></param>
         public void CreatePorterStemmerIndex(string name)
@@ -137,11 +150,11 @@ namespace ElasticNet
             {
                 c.Settings(l => l.Analysis(a =>
                 {
-                    a.TokenFilters(t => t.PorterStem("myFilter",j=>j));
+                    a.TokenFilters(t => t.PorterStem("myFilter", j => j));
                     a.Analyzers(an => an.Custom("myAnalizer", def =>
                     {
                         def.Tokenizer("standard");
-                        def.Filters("lowercase","myFilter");
+                        def.Filters("lowercase", "myFilter");
                         return def;
                     }));
                     return a;
@@ -152,7 +165,7 @@ namespace ElasticNet
         }
 
         /// <summary>
-        /// Creates an index with stop word filter
+        ///     Creates an index with stop word filter
         /// </summary>
         /// <param name="name"></param>
         public void CreateStopWordIndex(string name)
@@ -164,7 +177,7 @@ namespace ElasticNet
                 c.Settings(l => l.Analysis(a =>
                 {
                     // ReSharper disable once PossiblyMistakenUseOfParamsMethod
-                    a.TokenFilters(t => t.Stop("myFilter", j => j.StopWords("_english_"))); 
+                    a.TokenFilters(t => t.Stop("myFilter", j => j.StopWords("_english_")));
                     a.Analyzers(an => an.Custom("myAnalizer", def =>
                     {
                         def.Tokenizer("standard");
@@ -179,7 +192,7 @@ namespace ElasticNet
         }
 
         /// <summary>
-        /// Creates an index with the KStem system
+        ///     Creates an index with the KStem system
         /// </summary>
         /// <param name="name"></param>
         public void CreateKStemIndex(string name)
@@ -190,7 +203,7 @@ namespace ElasticNet
             {
                 c.Settings(l => l.Analysis(a =>
                 {
-                    a.TokenFilters(t => t.KStem("myFilter",j=>j));
+                    a.TokenFilters(t => t.KStem("myFilter", j => j));
                     a.Analyzers(an => an.Custom("myAnalizer", def =>
                     {
                         def.Tokenizer("standard");
@@ -205,7 +218,7 @@ namespace ElasticNet
         }
 
         /// <summary>
-        /// Creates an index using Snowball
+        ///     Creates an index using Snowball
         /// </summary>
         /// <param name="name"></param>
         public void CreateSnowballIndex(string name)
@@ -231,7 +244,7 @@ namespace ElasticNet
         }
 
         /// <summary>
-        /// Creates an index using Snowball more Stop Words filter
+        ///     Creates an index using Snowball more Stop Words filter
         /// </summary>
         /// <param name="name"></param>
         public void CreateStopWordSnowballIndex(string name)
@@ -243,11 +256,14 @@ namespace ElasticNet
                 c.Settings(l => l.Analysis(a =>
                 {
                     // ReSharper disable once PossiblyMistakenUseOfParamsMethod
-                    a.TokenFilters(t => t.Snowball("snowFilter", j => j.Language(SnowballLanguage.English)).Stop("stopFilter",d=>d.StopWords("_english_")));  
+                    a.TokenFilters(
+                        t =>
+                            t.Snowball("snowFilter", j => j.Language(SnowballLanguage.English))
+                                .Stop("stopFilter", d => d.StopWords("_english_")));
                     a.Analyzers(an => an.Custom("myAnalizer", def =>
                     {
                         def.Tokenizer("standard");
-                        def.Filters("lowercase","stopFilter", "snowFilter");
+                        def.Filters("lowercase", "stopFilter", "snowFilter");
                         return def;
                     }));
                     return a;
@@ -258,7 +274,7 @@ namespace ElasticNet
         }
 
         /// <summary>
-        /// Creates an index using Snowball more Stop Words filter more DFR similarity algorithm
+        ///     Creates an index using Snowball more Stop Words filter more DFR similarity algorithm
         /// </summary>
         /// <param name="name"></param>
         // ReSharper disable once InconsistentNaming
@@ -271,7 +287,10 @@ namespace ElasticNet
                 c.Settings(l => l.Analysis(a =>
                 {
                     // ReSharper disable once PossiblyMistakenUseOfParamsMethod
-                    a.TokenFilters(t => t.Snowball("snowFilter", j => j.Language(SnowballLanguage.English)).Stop("stopFilter", d => d.StopWords("_english_")));
+                    a.TokenFilters(
+                        t =>
+                            t.Snowball("snowFilter", j => j.Language(SnowballLanguage.English))
+                                .Stop("stopFilter", d => d.StopWords("_english_")));
                     a.Analyzers(an => an.Custom("myAnalizer", def =>
                     {
                         def.Tokenizer("standard");
@@ -284,18 +303,7 @@ namespace ElasticNet
                 return c;
             });
         }
-        #endregion
 
-        /// <summary>
-        /// Retrieves the analized text
-        /// </summary>
-        /// <param name="indexName"></param>
-        /// <param name="elasticResult"></param>
-        private async void AnalyzeText(string indexName, ElasticResult elasticResult)
-        {
-            if (!_isConnected) return;
-            var result = await _client.AnalyzeAsync(t => t.Index(indexName).Analyzer("myAnalizer").Text(elasticResult.Text));
-            elasticResult.TextAnalyzed = string.Join(" ",result.Tokens.Select(t=>t.Token));
-        }
+        #endregion
     }
 }

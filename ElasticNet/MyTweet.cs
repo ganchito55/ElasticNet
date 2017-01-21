@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Nest;
 
 namespace ElasticNet
@@ -10,18 +9,19 @@ namespace ElasticNet
         {
             Msg = msg;
         }
-        [Text(Name = "tweet",Analyzer = "myAnalizer")]
-        public String Msg { get; set; }
+
+        [Text(Name = "tweet", Analyzer = "myAnalizer")]
+        public string Msg { get; set; }
 
         /// <summary>
-        /// Remove "RT", users (@nick), urls
+        ///     Remove "RT", users (@nick), urls
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static String FilterCharacters(string input)
-        {   
-            Regex regex = new Regex("(RT)|(@[^\\s]+)|(http[^\\s]+)");
-            return regex.Replace(input, String.Empty).Trim();
+        public static string FilterCharacters(string input)
+        {
+            var regex = new Regex("(RT)|(@[^\\s]+)|(http[^\\s]+)");
+            return regex.Replace(input, string.Empty).Trim();
         }
     }
 
@@ -31,8 +31,8 @@ namespace ElasticNet
         public MyTweetDFR(string msg) : base(msg)
         {
         }
-     
+
         [Text(Name = "tweet", Analyzer = "myAnalizer", Similarity = "dfr")]
-        public String Txt { get; set; }
+        public string Txt { get; set; }
     }
 }

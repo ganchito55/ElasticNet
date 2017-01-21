@@ -1,9 +1,9 @@
 ﻿namespace ElasticNet
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow 
+    public partial class MainWindow
     {
         public MainWindow()
         {

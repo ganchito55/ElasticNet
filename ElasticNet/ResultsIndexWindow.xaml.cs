@@ -1,7 +1,7 @@
 ﻿namespace ElasticNet
 {
     /// <summary>
-    /// Lógica de interacción para ResultsIndex.xaml
+    ///     Lógica de interacción para ResultsIndex.xaml
     /// </summary>
     public partial class ResultsIndexWindow
     {

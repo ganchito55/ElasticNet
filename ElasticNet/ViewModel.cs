@@ -9,9 +9,9 @@ using Tweetinvi.Parameters;
 namespace ElasticNet
 {
     public class ViewModel : BindableBase
-    {  
+    {
         private readonly ElasticNetWrapper _elasticNet = new ElasticNetWrapper();
-        
+
         public ViewModel()
         {
             ConnectCommand = new DelegateCommand(Connect);
@@ -25,15 +25,16 @@ namespace ElasticNet
 
         #region Indices
 
-        private ObservableCollection<IndexGUI> _indexGuis; 
+        private ObservableCollection<IndexGUI> _indexGuis;
         // ReSharper disable once InconsistentNaming
         public ObservableCollection<IndexGUI> IndexGUIs
         {
             get { return _indexGuis; }
             set { SetProperty(ref _indexGuis, value); }
-        }  
+        }
 
-        private string _searchInElasticText="your search"; 
+        private string _searchInElasticText = "your search";
+
         public string SearchInElasticText
         {
             get { return _searchInElasticText; }
@@ -44,7 +45,7 @@ namespace ElasticNet
         public DelegateCommand RefreshIndicesCommand { get; set; }
 
         /// <summary>
-        /// Get all indices which name contains the IndexName
+        ///     Get all indices which name contains the IndexName
         /// </summary>
         private async void RefreshIndices()
         {
@@ -52,15 +53,15 @@ namespace ElasticNet
         }
 
         /// <summary>
-        /// Search in all indices 
+        ///     Search in all indices
         /// </summary>
-        private void  SearchInElastic()
+        private void SearchInElastic()
         {
-             _elasticNet.TweetMatchSearch(IndexGUIs, SearchInElasticText); 
+            _elasticNet.TweetMatchSearch(IndexGUIs, SearchInElasticText);
         }
 
         /// <summary>
-        /// Impor all tweets to all created indices
+        ///     Impor all tweets to all created indices
         /// </summary>
         private async void ImportTweets()
         {
@@ -69,7 +70,7 @@ namespace ElasticNet
         }
 
         /// <summary>
-        /// Create all Indices show documentation
+        ///     Create all Indices show documentation
         /// </summary>
         private void CreateIndices()
         {
@@ -84,7 +85,7 @@ namespace ElasticNet
         }
 
         /// <summary>
-        /// Create the new window with the results retrievaled
+        ///     Create the new window with the results retrievaled
         /// </summary>
         /// <param name="obj"></param>
         private void ShowResultsWindow(string obj)
@@ -109,14 +110,13 @@ namespace ElasticNet
         public DelegateCommand CreateIndecesCommand { get; set; }
         public DelegateCommand ImportTweetsCommand { get; set; }
         public DelegateCommand<string> ShowResultsWindowCommand { get; set; }
-#endregion
 
-      
+        #endregion
 
         #region elasticConfig
 
         /// <summary>
-        /// Connect to ElasticSearch
+        ///     Connect to ElasticSearch
         /// </summary>
         private void Connect()
         {
@@ -167,22 +167,24 @@ namespace ElasticNet
         #region Tweets
 
         /// <summary>
-        /// Look for tweets with Twitter API
+        ///     Look for tweets with Twitter API
         /// </summary>
         private async void SearchTweets()
         {
             var searchParameter = new SearchTweetsParameters(SearchText)
-            {   
+            {
                 SearchType = SearchResultType.Mixed,
-                MaximumNumberOfResults = 50,
+                MaximumNumberOfResults = 50
             };
             Auth.SetUserCredentials("Jh0bbj6EMR6AlFPh6VC7C7zSM",
                 "wtlp17TnbIboqmbXn7Mn1REAxQdncNV0uynAqiYGQu3FnLH3dl",
                 "229170763-jnZpiJ3XIkpy9JzwbMtyt2wOqEG0ZRKAXcGjTWga",
                 "DWlRojhGL2OnxRbZMJqZLl1dVCZDDLGrutmiEtz4bbYdV");
-            
+
             var tweets = await SearchAsync.SearchTweets(searchParameter);
-            TweetsRecovered = new ObservableCollection<string>(tweets.Select(tweet => MyTweet.FilterCharacters(tweet.FullText)).ToList());
+            TweetsRecovered =
+                new ObservableCollection<string>(
+                    tweets.Select(tweet => MyTweet.FilterCharacters(tweet.FullText)).ToList());
         }
 
         public DelegateCommand SearchTweetsCommand { get; set; }
@@ -206,13 +208,5 @@ namespace ElasticNet
         }
 
         #endregion
-
-
-        
-
-
-
-
     }
-
 }
