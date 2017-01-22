@@ -172,7 +172,7 @@ namespace ElasticNet
         {
             if (!_isConnected) return;
 
-            _client.CreateIndex(name + "-stem-stop", c =>
+            _client.CreateIndex(name + "-stop", c =>
             {
                 c.Settings(l => l.Analysis(a =>
                 {
@@ -251,7 +251,7 @@ namespace ElasticNet
         {
             if (!_isConnected) return;
 
-            _client.CreateIndex(name + "-stem-stop-snow", c =>
+            _client.CreateIndex(name + "-stop-stem-snow", c =>
             {
                 c.Settings(l => l.Analysis(a =>
                 {
@@ -282,7 +282,7 @@ namespace ElasticNet
         {
             if (!_isConnected) return;
 
-            _client.CreateIndex(name + "-stem-stop-snow-dfr", c =>
+            _client.CreateIndex(name + "-stop-stem-snow-dfr", c =>
             {
                 c.Settings(l => l.Analysis(a =>
                 {
