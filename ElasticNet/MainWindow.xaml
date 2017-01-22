@@ -58,7 +58,7 @@
                 </Grid.RowDefinitions>
                 <TextBlock Foreground="{StaticResource AccentColorBrush}" HorizontalAlignment="Center" FontSize="20">Twitter Search</TextBlock>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <TextBox HorizontalAlignment="Left" Text="{Binding SearchText}" Width="100" />
+                    <TextBox HorizontalAlignment="Left" Text="{Binding SearchText}" Width="300" />
                     <Button Command="{Binding SearchTweetsCommand}" Content="&#xE094;" FontFamily="Segoe MDL2 Assets" />
                 </StackPanel>
                 <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
@@ -75,7 +75,7 @@
                 </Grid.RowDefinitions>
                 <TextBlock Foreground="{StaticResource AccentColorBrush}" HorizontalAlignment="Center" FontSize="20">ElasticSearch</TextBlock>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <TextBox Text="{Binding IndexName}" Width="70" />
+                    <TextBox Text="{Binding IndexName}" Width="120" />
                     <Button Content="&#xE149;" FontFamily="Segoe MDL2 Assets" Command="{Binding RefreshIndicesCommand}" />
                     <Rectangle Fill="{x:Null}" Width="10" />
                     <Button Command="{Binding CreateIndecesCommand}">Create Indeces</Button>
@@ -84,7 +84,7 @@
                     <Rectangle Fill="{x:Null}" Width="10" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <TextBox Text="{Binding SearchInElasticText}" Width="250" />
+                    <TextBox Text="{Binding SearchInElasticText}" Width="300" />
                     <Button Command="{Binding SearchInElasticCommand}" Content="&#xE094;"
                             FontFamily="Segoe MDL2 Assets" />
                 </StackPanel>
