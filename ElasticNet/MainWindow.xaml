@@ -62,7 +62,13 @@
                     <Button Command="{Binding SearchTweetsCommand}" Content="&#xE094;" FontFamily="Segoe MDL2 Assets" />
                 </StackPanel>
                 <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
-                    <ListView ItemsSource="{Binding TweetsRecovered}" />
+                    <ListView ItemsSource="{Binding TweetsRecovered}" >
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Msg}"></TextBlock>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </ScrollViewer>
             </Grid>
             <Rectangle Grid.Column="1" Fill="{StaticResource AccentColorBrush}" Width="2" />
@@ -84,9 +90,10 @@
                     <Rectangle Fill="{x:Null}" Width="10" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <TextBox Text="{Binding SearchInElasticText}" Width="300" />
+                    <TextBox Text="{Binding SearchInElasticText}" Width="250" />
                     <Button Command="{Binding SearchInElasticCommand}" Content="&#xE094;"
                             FontFamily="Segoe MDL2 Assets" />
+                    <Button Command="{Binding MarkRelevantCommand}">Mark relevant docs</Button>
                 </StackPanel>
                 <ScrollViewer Grid.Row="3">
                     <DataGrid IsReadOnly="True" ItemsSource="{Binding IndexGUIs}" AutoGenerateColumns="False"

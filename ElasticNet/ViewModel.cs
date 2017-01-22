@@ -1,5 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using Microsoft.Win32;
+using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Mvvm;
 using Tweetinvi;
@@ -21,7 +25,12 @@ namespace ElasticNet
             SearchInElasticCommand = new DelegateCommand(SearchInElastic);
             RefreshIndicesCommand = new DelegateCommand(RefreshIndices);
             ShowResultsWindowCommand = new DelegateCommand<string>(ShowResultsWindow);
+            MarkRelevantCommand = new DelegateCommand(MarkRelevant);
+            ImportTweetsListCommand = new DelegateCommand(ImportTweetsList);
+            ExportTweetsListCommand = new DelegateCommand(ExportTweetsList);
+
         }
+
 
         #region Indices
 
@@ -41,8 +50,19 @@ namespace ElasticNet
             set { SetProperty(ref _searchInElasticText, value); }
         }
 
+        /// <summary>
+        /// Mark relevat documents for each search
+        /// </summary>
+        private void MarkRelevant()
+        {
+            Relevants relevants = new Relevants();
+            relevants.DataContext = this;
+            relevants.Title = "Documents relevanted for " + SearchInElasticText;
+            relevants.ShowDialog(); 
+        }
         public DelegateCommand SearchInElasticCommand { get; set; }
         public DelegateCommand RefreshIndicesCommand { get; set; }
+        public DelegateCommand MarkRelevantCommand { get; set; }
 
         /// <summary>
         ///     Get all indices which name contains the IndexName
@@ -65,7 +85,7 @@ namespace ElasticNet
         /// </summary>
         private async void ImportTweets()
         {
-            await _elasticNet.ImportTweetsBulk(TweetsRecovered.ToList());
+            await _elasticNet.ImportTweetsBulk(TweetsRecovered.Select(t=>t.Msg).ToList());
             RefreshIndices();
         }
 
@@ -181,13 +201,41 @@ namespace ElasticNet
                 "229170763-jnZpiJ3XIkpy9JzwbMtyt2wOqEG0ZRKAXcGjTWga",
                 "DWlRojhGL2OnxRbZMJqZLl1dVCZDDLGrutmiEtz4bbYdV");
 
-            var tweets = await SearchAsync.SearchTweets(searchParameter);
-            TweetsRecovered =
-                new ObservableCollection<string>(
-                    tweets.Select(tweet => MyTweet.FilterCharacters(tweet.FullText)).ToList());
+            var tweets = await SearchAsync.SearchTweets(searchParameter); 
+            TweetsRecovered = new ObservableCollection<MyTweet>(
+                tweets.Select(tweet =>
+                new MyTweet(MyTweet.FilterCharacters(tweet.FullText))
+                ).ToList());
+        }
+
+        /// <summary>
+        /// Export Tweets to file
+        /// </summary>
+        private void ExportTweetsList()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            if (saveFileDialog.ShowDialog()!=null)
+            {
+                File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(TweetsRecovered));
+            }
+        }
+
+        /// <summary>
+        ///  Import Tweets from file
+        /// </summary>
+        private void ImportTweetsList()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() != null)
+            {
+                var readed = File.ReadAllText(openFileDialog.FileName);
+                TweetsRecovered = JsonConvert.DeserializeObject<ObservableCollection<MyTweet>>(readed);
+            }
         }
 
         public DelegateCommand SearchTweetsCommand { get; set; }
+        public DelegateCommand ImportTweetsListCommand { get; set; }
+        public DelegateCommand ExportTweetsListCommand { get; set; }
 
 
         private string _searchText = "your search";
@@ -199,9 +247,9 @@ namespace ElasticNet
         }
 
 
-        private ObservableCollection<string> _tweetsRecovered;
+        private ObservableCollection<MyTweet> _tweetsRecovered;
 
-        public ObservableCollection<string> TweetsRecovered
+        public ObservableCollection<MyTweet> TweetsRecovered
         {
             get { return _tweetsRecovered; }
             set { SetProperty(ref _tweetsRecovered, value); }

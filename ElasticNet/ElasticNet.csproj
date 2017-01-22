@@ -138,6 +138,9 @@
     <Compile Include="ElasticNetWrapper.cs" />
     <Compile Include="IndexGUI.cs" />
     <Compile Include="MyTweet.cs" />
+    <Compile Include="Relevants.xaml.cs">
+      <DependentUpon>Relevants.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ResultsIndexWindow.xaml.cs">
       <DependentUpon>ResultsIndexWindow.xaml</DependentUpon>
     </Compile>
@@ -154,6 +157,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Relevants.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ResultsIndexWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

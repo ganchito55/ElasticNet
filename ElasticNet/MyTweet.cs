@@ -10,6 +10,12 @@ namespace ElasticNet
             Msg = msg;
         }
 
+        /// <summary>
+        /// Ignore property for indexing in ElasticSearch
+        /// </summary>
+        [Boolean(Ignore = true)]
+        public bool IsRelevant { get; set; } = false;
+
         [Text(Name = "tweet", Analyzer = "myAnalizer")]
         public string Msg { get; set; }
 

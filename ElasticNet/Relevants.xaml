@@ -1,0 +1,33 @@
+﻿<controls:MetroWindow x:Class="ElasticNet.Relevants"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ElasticNet"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        mc:Ignorable="d"
+        Title="Relevants" Height="300" Width="300" TitleCaps="False"
+                      controls:ButtonHelper.PreserveTextCase="True">
+    <controls:MetroWindow.Resources>
+        <Style x:Key="MyColumnHeader"
+               BasedOn="{StaticResource MetroDataGridColumnHeader}"
+               TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="controls:ControlsHelper.ContentCharacterCasing" Value="Normal" />
+        </Style>
+    </controls:MetroWindow.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Button Command="{Binding ImportTweetsListCommand}" >Import list</Button>
+            <Rectangle Fill="{x:Null}" Width="40"></Rectangle>
+            <Button Command="{Binding ExportTweetsListCommand}" >Export list</Button>
+        </StackPanel>
+        <DataGrid Grid.Row="1" AutoGenerateColumns="True" ItemsSource="{Binding TweetsRecovered}"></DataGrid>
+    </Grid>
+</controls:MetroWindow>
+
+
+
