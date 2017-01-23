@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -203,7 +204,7 @@ namespace ElasticNet
 
             var tweets = await SearchAsync.SearchTweets(searchParameter); 
             TweetsRecovered = new ObservableCollection<MyTweet>(
-                tweets.Select(tweet =>
+                tweets.Distinct().Select(tweet =>
                 new MyTweet(MyTweet.FilterCharacters(tweet.FullText))
                 ).ToList());
         }
@@ -216,7 +217,15 @@ namespace ElasticNet
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             if (saveFileDialog.ShowDialog()!=null)
             {
-                File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(TweetsRecovered));
+                try
+                {
+                    File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(TweetsRecovered));
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
         }
 
@@ -228,8 +237,15 @@ namespace ElasticNet
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() != null)
             {
-                var readed = File.ReadAllText(openFileDialog.FileName);
-                TweetsRecovered = JsonConvert.DeserializeObject<ObservableCollection<MyTweet>>(readed);
+                try
+                {
+                    var readed = File.ReadAllText(openFileDialog.FileName);
+                    TweetsRecovered = JsonConvert.DeserializeObject<ObservableCollection<MyTweet>>(readed);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }   
             }
         }
 

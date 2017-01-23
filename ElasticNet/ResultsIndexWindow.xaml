@@ -14,6 +14,33 @@
         </Style>
     </controls:MetroWindow.Resources>
     <Grid>
-        <DataGrid ItemsSource="{Binding Results}" ColumnHeaderStyle="{StaticResource MyColumnHeader}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock>Precision</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="1">Precision 5doc</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="2">Recall</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="3">Noise</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="4">Silence</TextBlock>
+            <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding Metrics.Precision,StringFormat=N4}"></TextBox>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Metrics.Precision5,StringFormat=N4}"></TextBox>
+            <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Metrics.Recall,StringFormat=N4}"></TextBox>
+            <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding Metrics.Noise,StringFormat=N4}"></TextBox>
+            <TextBox Grid.Row="1" Grid.Column="4" Text="{Binding Metrics.Silence,StringFormat=N4}"></TextBox>
+        </Grid>
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Results}" ColumnHeaderStyle="{StaticResource MyColumnHeader}" />
     </Grid>
 </controls:MetroWindow>

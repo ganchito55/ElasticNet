@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Nest;
+using Newtonsoft.Json;
 
 namespace ElasticNet
 {
@@ -70,6 +72,7 @@ namespace ElasticNet
                     index.Results.Add(result);
                     AnalyzeText(index.Name, result);
                 }
+                index.ComputeMetrics();
             }
         }
 
