@@ -89,19 +89,17 @@ namespace ElasticNet
 
             double precision = -1, recall = -1, noise = -1;
             double silence = -1,precision5=-1;
-            if (relevantsRetrievaled.Count != 0)
+            if (retrievaled.Count != 0)
             {
-                precision = retrievaled.Count / (double) relevantsRetrievaled.Count; 
+                noise = (retrievaled.Count - relevantsRetrievaled.Count) / (double)retrievaled.Count;
+                precision = relevantsRetrievaled.Count / (double)retrievaled.Count;  
             }
             if (relevants.Count != 0)
             {
                 recall = relevantsRetrievaled.Count / (double)relevants.Count;
                 silence = (relevants.Count - relevantsRetrievaled.Count) / (double)relevants.Count;
             }
-            if (retrievaled.Count != 0)
-            {
-                noise = (retrievaled.Count - relevantsRetrievaled.Count) / (double)retrievaled.Count; 
-            }
+           
 
             if (retrievaled.Count > 5)
             {
